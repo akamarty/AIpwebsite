@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<![CDATA[
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0}
+a{color:var(--color-accent)}
+a:hover{color:var(--color-accent-700)}
+</style>
+</helmet>
+<div data-screen-label="Homepage" style="background:var(--color-bg);color:var(--color-text);min-height:100vh;font-family:var(--font-body)">
+
+  <nav class="nav" style="max-width:1280px;margin:0 auto;border-bottom:2px solid var(--color-divider)">
+    <span class="nav-brand">sophiapilot</span>
+    <a href="Homepage.dc.html" aria-current="page">VIN Decoder</a>
+    <a href="CreateAccount.dc.html">Garage</a>
+    <a href="#pricing">Pricing</a>
+    <div style="margin-left:auto;display:flex;gap:var(--space-2)">
+      <a href="CreateAccount.dc.html" class="btn btn-secondary">Log in</a>
+      <a href="CreateAccount.dc.html" class="btn btn-primary">Sign up</a>
+    </div>
+  </nav>
+
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4);display:grid;grid-template-columns:1.1fr 0.9fr;gap:var(--space-8);align-items:center">
+    <div>
+      <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">PORSCHE VIN DECODER</h6>
+      <h1 style="font-size:64px;margin-bottom:var(--space-4)">{{ heroHeadline }}</h1>
+      <p style="font-size:18px;max-width:520px;opacity:0.8;margin-bottom:var(--space-6)">Discover factory options, specifications, rarity, and market insights — from a 17-character VIN to the full story of the car.</p>
+
+      <form onSubmit="{{ handleSearch }}" style="display:flex;gap:var(--space-2);margin-bottom:var(--space-2)">
+        <input class="input" style="font-family:monospace;letter-spacing:0.04em;font-size:16px;padding:12px 14px" placeholder="Enter a 17-character VIN, e.g. WP0AC2A99KS165890" value="{{ vin }}" onChange="{{ handleVinChange }}"></input>
+        <button type="submit" class="btn btn-primary" style="padding:12px 28px;font-size:15px;white-space:nowrap">{{ ctaLabel }}</button>
+      </form>
+      <button class="btn btn-ghost" onClick="{{ handleExample }}" style="padding-left:0">Try the example VIN &rarr;</button>
+    </div>
+
+    <div class="grayscale" style="aspect-ratio:4/3;border:2px solid var(--color-divider)">
+      <image-slot id="hero-car" shape="rect" placeholder="Drop a Porsche hero photo"></image-slot>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+    <h2 style="margin-bottom:var(--space-6)">Every VIN, fully decoded</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4)">
+      <div class="card elev-sm">
+        <p class="card-kicker">FACTORY OPTIONS</p>
+        <h3 class="card-title">Plain-English explanations</h3>
+        <p class="card-body">Every option code — PCCB, X73, PTS — explained in the context of why collectors actually care.</p>
+      </div>
+      <div class="card elev-sm">
+        <p class="card-kicker">SPECIFICATIONS</p>
+        <h3 class="card-title">The full factory build</h3>
+        <p class="card-body">Model, generation, engine, output, transmission, drive type, and original colors — pulled straight from the VIN.</p>
+      </div>
+      <div class="card elev-sm">
+        <p class="card-kicker">PRODUCTION</p>
+        <h3 class="card-title">Rarity &amp; provenance</h3>
+        <p class="card-body">Plant, build date, and how many like it left the factory — the context that sets a car's collector value.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-6) var(--space-4);display:flex;align-items:center;gap:var(--space-6);flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase">Built for</span>
+    <span style="font-size:14px">Rennlist regulars</span>
+    <span style="font-size:14px">Bring a Trailer bidders</span>
+    <span style="font-size:14px">PCA members</span>
+    <span style="font-size:14px">Dealers &amp; auction buyers</span>
+  </section>
+
+  <section id="pricing" style="background:var(--color-accent);padding:var(--space-8) var(--space-4)">
+    <div style="max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--space-4)">
+      <h2 style="color:var(--color-bg);margin:0">Free to decode. Free to start a Garage.</h2>
+      <a href="CreateAccount.dc.html" class="btn" style="background:var(--color-bg);color:var(--color-accent-800)">Create free account</a>
+    </div>
+  </section>
+
+  <footer style="max-width:1280px;margin:0 auto;padding:var(--space-6) var(--space-4);display:flex;justify-content:space-between;color:var(--color-text)">
+    <span class="text-muted" style="font-size:13px">© 2026 sophiapilot</span>
+    <div style="display:flex;gap:var(--space-4);font-size:13px">
+      <a href="#option-codes">Option Code Database</a>
+      <a href="#pts">PTS Colors</a>
+      <a href="#pccb">PCCB Explained</a>
+    </div>
+  </footer>
+</div>
+]]>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroHeadline&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Decode Any Porsche VIN&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ctaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Decode VIN&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+<![CDATA[
+class Component extends DCLogic {
+  state = { vin: "" };
+  handleVinChange(e) { this.setState({ vin: e.target.value }); }
+  handleSearch(e) {
+    e.preventDefault();
+    window.location.href = "VinResults.dc.html";
+  }
+  handleExample() {
+    window.location.href = "VinResults.dc.html";
+  }
+  renderVals() {
+    return {
+      heroHeadline: this.props.heroHeadline ?? "Decode Any Porsche VIN",
+      ctaLabel: this.props.ctaLabel ?? "Decode VIN",
+      vin: this.state.vin,
+      handleVinChange: (e) => this.handleVinChange(e),
+      handleSearch: (e) => this.handleSearch(e),
+      handleExample: () => this.handleExample(),
+    };
+  }
+}
+]]>
+</script>
+</body>
+</html>
