@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<![CDATA[
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0}
+a{color:var(--color-accent)}
+a:hover{color:var(--color-accent-700)}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;letter-spacing:0.04em;padding:3px 9px;border:1px solid var(--color-divider)}
+.ticker-row{display:flex;gap:var(--space-6);overflow-x:auto;padding-bottom:2px}
+.ticker-item{flex:none;font-size:13px;white-space:nowrap;padding-right:var(--space-6);border-right:1px solid var(--color-divider)}
+.stat-num{font-family:var(--font-heading);font-weight:800;font-size:30px;line-height:1}
+.feature-row{display:grid;grid-template-columns:0.95fr 1.05fr;gap:var(--space-8);align-items:center;padding:var(--space-8) 0;border-bottom:2px solid var(--color-divider)}
+.feature-row:last-of-type{border-bottom:none}
+.feature-row.rev{grid-template-columns:1.05fr 0.95fr}
+.feature-row.rev .feature-visual{order:-1}
+.step-num{font-family:var(--font-heading);font-weight:800;font-size:13px;color:var(--color-accent)}
+</style>
+</helmet>
+<div data-screen-label="Homepage" style="background:var(--color-bg);color:var(--color-text);min-height:100vh;font-family:var(--font-body)">
+
+  <nav class="nav" style="max-width:1280px;margin:0 auto;border-bottom:2px solid var(--color-divider)">
+    <span class="nav-brand">sophiapilot</span>
+    <a href="index.html" aria-current="page">VIN Decoder</a>
+    <a href="CreateAccount.dc.html">Garage</a>
+    <a href="Pricing.dc.html">Pricing</a>
+    <div style="margin-left:auto;display:flex;gap:var(--space-2)">
+      <a href="CreateAccount.dc.html" class="btn btn-secondary">Log in</a>
+      <a href="CreateAccount.dc.html" class="btn btn-primary">Sign up</a>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4);display:grid;grid-template-columns:1.1fr 0.9fr;gap:var(--space-8);align-items:center">
+    <div>
+      <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">PORSCHE VIN DECODER</h6>
+      <h1 style="font-size:58px;margin-bottom:var(--space-4)">{{ heroHeadline }}</h1>
+      <p style="font-size:18px;max-width:520px;opacity:0.8;margin-bottom:var(--space-6)">Every factory option explained in plain English, the full build sheet, and how rare it really is — from a 17-character VIN, in seconds.</p>
+
+      <form onSubmit="{{ handleSearch }}" style="display:flex;gap:var(--space-2);margin-bottom:var(--space-2)">
+        <input class="input" style="font-family:monospace;letter-spacing:0.04em;font-size:16px;padding:12px 14px" placeholder="Enter a 17-character VIN, e.g. WP0AC2A99KS165890" value="{{ vin }}" onChange="{{ handleVinChange }}"></input>
+        <button type="submit" class="btn btn-primary" style="padding:12px 28px;font-size:15px;white-space:nowrap">{{ ctaLabel }}</button>
+      </form>
+      <button class="btn btn-ghost" onClick="{{ handleExample }}" style="padding-left:0">Try the example VIN &rarr;</button>
+      <p class="text-muted" style="font-size:12px;margin-top:var(--space-4)">Free to decode &middot; no credit card &middot; cancel anytime</p>
+    </div>
+
+    <div style="position:relative">
+      <div class="grayscale" style="aspect-ratio:4/3;border:2px solid var(--color-divider)">
+        <image-slot id="hero-car" shape="rect" placeholder="Drop a Porsche hero photo"></image-slot>
+      </div>
+      <div class="card elev-lg" style="position:absolute;left:-24px;bottom:-24px;width:250px;background:var(--color-bg);border:2px solid var(--color-divider)">
+        <span class="tag tag-accent" style="align-self:flex-start;font-family:monospace">991.2 &middot; GT CAR</span>
+        <h4 style="margin:0">2019 911 GT3</h4>
+        <div class="hr" style="margin:var(--space-1) 0"></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span class="text-muted">Factory options found</span>
+          <strong>4</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span class="text-muted">Rarity</span>
+          <strong>1 of ~1,600</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span class="text-muted">Decode time</span>
+          <strong>1.4s</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ STAT STRIP ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-6) var(--space-4);display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4)">
+    <div>
+      <div class="stat-num">18,400+</div>
+      <p class="text-muted" style="font-size:13px;margin:0">VINs decoded</p>
+    </div>
+    <div>
+      <div class="stat-num">640+</div>
+      <p class="text-muted" style="font-size:13px;margin:0">Factory option codes explained</p>
+    </div>
+    <div>
+      <div class="stat-num">1963&ndash;now</div>
+      <p class="text-muted" style="font-size:13px;margin:0">Production years covered</p>
+    </div>
+    <div>
+      <div class="stat-num">12</div>
+      <p class="text-muted" style="font-size:13px;margin:0">Chassis platforms, 911 to Taycan</p>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ LIVE TICKER ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-4)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">JUST DECODED &mdash; LIVE FROM THE SITE</h6>
+    <div class="ticker-row">
+      <span class="ticker-item">2019 911 GT3 (991.2) &middot; 4 options found &middot; today</span>
+      <span class="ticker-item">2016 Cayman GT4 (981) &middot; PCCB + Alcantara &middot; today</span>
+      <span class="ticker-item">1973 911 Carrera RS 2.7 &middot; Touring &middot; today</span>
+      <span class="ticker-item">2022 992 GT3 RS &middot; Weissach Pkg &middot; today</span>
+      <span class="ticker-item">2003 996 Turbo X50 &middot; today</span>
+      <span class="ticker-item">1995 993 Carrera RS &middot; today</span>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ FEATURE SHOWCASE ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-2)">NOT A MARKET INDEX. THE FULL STORY OF ONE CAR.</h6>
+    <h2 style="max-width:680px;margin-bottom:var(--space-8)">Other tools give you a value. sophiapilot gives you the factory truth behind it.</h2>
+
+    <div class="feature-row">
+      <div>
+        <span class="tag tag-neutral" style="margin-bottom:var(--space-2)">FREE</span>
+        <h3 class="card-title" style="font-size:24px">Every option code, explained in plain English</h3>
+        <p style="opacity:0.85">PCCB, X51, X73, PTS &mdash; AI reads the factory codes off your exact VIN and explains what each one means and why collectors actually care, not just what the acronym stands for.</p>
+      </div>
+      <div class="feature-visual card elev-sm">
+        <p class="card-kicker">FACTORY OPTIONS</p>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <div style="display:grid;grid-template-columns:80px 1fr;gap:var(--space-3);align-items:start">
+            <span class="tag tag-accent" style="font-family:monospace">PCCB</span>
+            <span style="font-size:13px;opacity:0.85">Ceramic composite brakes &mdash; sheds 40+ lbs of unsprung weight, a near must-have for track-honest GT cars.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr;gap:var(--space-3);align-items:start">
+            <span class="tag tag-accent" style="font-family:monospace">X-CLUB</span>
+            <span style="font-size:13px;opacity:0.85">Club Sport Package &mdash; half-cage prep and a harness bar, a signal the car was bought to be driven hard.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-row rev">
+      <div>
+        <span class="tag tag-neutral" style="margin-bottom:var(--space-2)">FREE</span>
+        <h3 class="card-title" style="font-size:24px">The complete factory build sheet</h3>
+        <p style="opacity:0.85">Model, generation, engine, output, transmission, drive type, original colors, MSRP, plant, and build date &mdash; pulled straight from the VIN, not a guess.</p>
+      </div>
+      <div class="feature-visual card elev-sm">
+        <p class="card-kicker">SPEC SHEET</p>
+        <table class="table" style="font-size:12.5px">
+          <tbody>
+            <tr><td class="text-muted">Engine</td><td>4.0L NA Flat-6</td></tr>
+            <tr><td class="text-muted">Horsepower</td><td>500 hp @ 8,250 rpm</td></tr>
+            <tr><td class="text-muted">Plant</td><td>Zuffenhausen, Germany</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div>
+        <span class="tag tag-accent" style="margin-bottom:var(--space-2)">PRO</span>
+        <h3 class="card-title" style="font-size:24px">A Collector Score for the exact car in front of you</h3>
+        <p style="opacity:0.85">How this build ranks against every other example of the same model for spec, rarity, and options &mdash; a single number, not a spreadsheet.</p>
+      </div>
+      <div class="feature-visual card elev-sm" style="position:relative">
+        <p class="card-kicker">COLLECTOR SCORE</p>
+        <h3 class="card-title locked-value" style="filter:blur(6px)">8.7 / 10</h3>
+        <p class="card-body">Ranked against every 991.2 GT3 on record.</p>
+      </div>
+    </div>
+
+    <div class="feature-row rev">
+      <div>
+        <span class="tag tag-accent" style="margin-bottom:var(--space-2)">PRO</span>
+        <h3 class="card-title" style="font-size:24px">A market value estimate and auction history, on that VIN</h3>
+        <p style="opacity:0.85">Live comps tuned to this exact spec, plus every time this VIN &mdash; or one just like it &mdash; has crossed the block.</p>
+      </div>
+      <div class="feature-visual card elev-sm" style="position:relative">
+        <p class="card-kicker">MARKET VALUE</p>
+        <h3 class="card-title locked-value" style="filter:blur(6px)">$189,400</h3>
+        <p class="card-body">3 prior auction listings on file.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ HOW IT WORKS ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+    <h2 style="margin-bottom:var(--space-6)">From any VIN to the full story</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4)">
+      <div class="card elev-sm">
+        <span class="step-num">01</span>
+        <h3 class="card-title">Paste any VIN</h3>
+        <p class="card-body">Every Porsche chassis, 1963 to today &mdash; if it left Zuffenhausen, we can read it.</p>
+      </div>
+      <div class="card elev-sm">
+        <span class="step-num">02</span>
+        <h3 class="card-title">Get the factory truth</h3>
+        <p class="card-body">Full spec sheet plus AI-explained option codes, in under two seconds.</p>
+      </div>
+      <div class="card elev-sm">
+        <span class="step-num">03</span>
+        <h3 class="card-title">See rarity &amp; context</h3>
+        <p class="card-body">How many left the factory like it, and why that matters to collectors.</p>
+      </div>
+      <div class="card elev-sm">
+        <span class="step-num">04</span>
+        <h3 class="card-title">Save it to your Garage</h3>
+        <p class="card-body">Free account unlocks Collector Score, Market Value, and Auction History.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ PRICING TEASER ═══ -->
+  <section id="pricing" style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-6)">
+      <h2 style="margin:0">Start free. Upgrade when it pays for itself.</h2>
+      <a href="Pricing.dc.html" class="btn btn-ghost">Compare every feature &rarr;</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4)">
+      <div class="card elev-sm">
+        <p class="card-kicker">FREE</p>
+        <h3 class="card-title">$0</h3>
+        <p class="card-body">Unlimited VIN decodes, factory options explained, full spec sheet, personal Garage.</p>
+      </div>
+      <div class="card elev-sm">
+        <p class="card-kicker">PRO</p>
+        <h3 class="card-title">$9.99/mo</h3>
+        <p class="card-body">Collector Score, Market Value estimates, price history, rare-option alerts.</p>
+      </div>
+      <div class="card elev-sm" style="box-shadow:var(--shadow-lg);border:2px solid var(--color-accent)">
+        <p class="card-kicker">MOST POPULAR &middot; COLLECTOR</p>
+        <h3 class="card-title">$19.99/mo</h3>
+        <p class="card-body">Everything in Pro, plus Auction History, monthly reports, and VIN concierge access.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ TRUST STRIP ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-6) var(--space-4);display:flex;align-items:center;gap:var(--space-6);flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase">Built for</span>
+    <span style="font-size:14px">Rennlist regulars</span>
+    <span style="font-size:14px">Bring a Trailer bidders</span>
+    <span style="font-size:14px">PCA members</span>
+    <span style="font-size:14px">Dealers &amp; auction buyers</span>
+  </section>
+
+  <!-- ═══ CLOSING CTA ═══ -->
+  <section style="background:var(--color-accent);padding:var(--space-8) var(--space-4)">
+    <div style="max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--space-4)">
+      <h2 style="color:var(--color-bg);margin:0">Free to decode. Free to start a Garage.</h2>
+      <a href="CreateAccount.dc.html" class="btn" style="background:var(--color-bg);color:var(--color-accent-800)">Create free account</a>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4);display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:var(--space-6)">
+    <div>
+      <span class="nav-brand" style="display:block;margin-bottom:var(--space-2)">sophiapilot</span>
+      <p class="text-muted" style="font-size:13px;max-width:280px">A Porsche VIN decoder built for people who read option codes for fun.</p>
+    </div>
+    <div>
+      <h6 class="text-muted" style="margin-bottom:var(--space-2)">LEARN</h6>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+        <a href="#option-codes">Option Code Database</a>
+        <a href="#pts">PTS Colors</a>
+        <a href="#pccb">PCCB Explained</a>
+      </div>
+    </div>
+    <div>
+      <h6 class="text-muted" style="margin-bottom:var(--space-2)">PRODUCT</h6>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+        <a href="index.html">VIN Decoder</a>
+        <a href="Pricing.dc.html">Pricing</a>
+        <a href="Pricing.dc.html#faq">FAQ</a>
+      </div>
+    </div>
+    <div>
+      <h6 class="text-muted" style="margin-bottom:var(--space-2)">COMPANY</h6>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+        <a href="#contact">Contact</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#terms">Terms</a>
+      </div>
+    </div>
+  </footer>
+  <div style="max-width:1280px;margin:0 auto;padding:0 var(--space-4) var(--space-6)">
+    <span class="text-muted" style="font-size:12px">&copy; 2026 sophiapilot</span>
+  </div>
+</div>
+]]>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroHeadline&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Decode Any Porsche VIN&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ctaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Decode VIN&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { vin: "" };
+  handleVinChange(e) { this.setState({ vin: e.target.value }); }
+  handleSearch(e) {
+    e.preventDefault();
+    window.location.href = "VinResults.dc.html";
+  }
+  handleExample() {
+    window.location.href = "VinResults.dc.html";
+  }
+  renderVals() {
+    return {
+      heroHeadline: this.props.heroHeadline ?? "Decode Any Porsche VIN",
+      ctaLabel: this.props.ctaLabel ?? "Decode VIN",
+      vin: this.state.vin,
+      handleVinChange: (e) => this.handleVinChange(e),
+      handleSearch: (e) => this.handleSearch(e),
+      handleExample: () => this.handleExample(),
+    };
+  }
+}
+</script>
+</body>
+</html>
