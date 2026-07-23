@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="./vin-decoder.js"></script>
+<script src="./spyder-builds.js"></script>
+</head>
+<body>
+<x-dc>
+<![CDATA[
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>
+body{margin:0}
+a{color:var(--color-accent)}
+a:hover{color:var(--color-accent-700)}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;letter-spacing:0.04em;padding:3px 9px;border:1px solid var(--color-divider)}
+.ticker-row{display:flex;gap:var(--space-6);overflow-x:auto;padding-bottom:2px}
+.ticker-item{flex:none;font-size:13px;white-space:nowrap;padding-right:var(--space-6);border-right:1px solid var(--color-divider)}
+.stat-num{font-family:var(--font-heading);font-weight:800;font-size:30px;line-height:1}
+.feature-row{display:grid;grid-template-columns:0.95fr 1.05fr;gap:var(--space-8);align-items:center;padding:var(--space-8) 0;border-bottom:2px solid var(--color-divider)}
+.feature-row:last-of-type{border-bottom:none}
+.feature-row.rev{grid-template-columns:1.05fr 0.95fr}
+.feature-row.rev .feature-visual{order:-1}
+.step-num{font-family:var(--font-heading);font-weight:800;font-size:13px;color:var(--color-accent)}
+.gradient-text{background:var(--gradient-ai-diag);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ask-input-pill-lg{padding:14px 16px 14px 22px;border-radius:999px}
+.ask-input-pill-lg .input{font-size:15px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.ai-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;
+  font-family:var(--font-body);color:var(--color-text);cursor:pointer;
+  border:1px solid transparent;
+  background-image:linear-gradient(var(--color-surface),var(--color-surface)),var(--gradient-ai);
+  background-origin:border-box;background-clip:padding-box,border-box;
+}
+.ai-chip:hover{background-image:linear-gradient(color-mix(in srgb, var(--color-text) 6%, var(--color-surface)),color-mix(in srgb, var(--color-text) 6%, var(--color-surface))),var(--gradient-ai)}
+.ai-chip .sparkle{background:var(--gradient-ai-diag);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;line-height:1}
+.sg-rows{display:flex;flex-direction:column}
+.sg-row{display:grid;grid-template-columns:1fr 220px 130px;align-items:center;gap:var(--space-4);padding:13px 0;border-bottom:1px solid var(--color-divider)}
+.sg-row:last-child{border-bottom:none}
+.sg-label{font-size:13.5px;font-weight:600;line-height:1.3}
+.sg-track{height:9px;background:var(--color-neutral-200);border-radius:999px;overflow:hidden}
+.sg-fill{height:100%;border-radius:999px;background:var(--gradient-ai)}
+.sg-value-col{text-align:right}
+.sg-value{font-family:var(--font-heading);font-weight:800;font-size:16px;line-height:1.2}
+.sg-meta{font-size:10.5px;opacity:0.55;margin-top:2px}
+@media (max-width:720px){
+  .sg-row{grid-template-columns:1fr;gap:6px;padding:12px 0}
+  .sg-value-col{text-align:left}
+}
+.source-note{font-size:11.5px;opacity:0.6;margin-top:var(--space-2)}
+.tt-chart-card{padding:var(--space-6)}
+.tt-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-6)}
+.tt-stat .label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.07em;opacity:0.55;margin-bottom:4px}
+.tt-stat .value{font-family:var(--font-heading);font-weight:800;font-size:24px;line-height:1.1}
+.tt-axis-label{font-size:12px;opacity:0.55}
+@media (max-width:900px){.tt-stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</helmet>
+<div data-screen-label="Homepage" style="background:var(--color-bg);color:var(--color-text);min-height:100vh;font-family:var(--font-body)">
+
+  <div class="gradient-bar"></div>
+
+  <!-- ═══ HERO — ASK UI ═══ -->
+  <section style="max-width:640px;margin:0 auto;min-height:90vh;padding:var(--space-6) var(--space-4);display:flex;flex-direction:column;justify-content:center;text-align:center">
+    <div class="brand-lockup" style="align-self:center;margin-bottom:2px">
+      <svg class="brand-mark" width="20" height="20" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="gradHeroMark" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#3b6bff"/>
+            <stop offset="33%" stop-color="#8b5cf6"/>
+            <stop offset="66%" stop-color="#d946ef"/>
+            <stop offset="100%" stop-color="#ec4899"/>
+          </linearGradient>
+        </defs>
+        <rect width="28" height="28" rx="8" fill="url(#gradHeroMark)"/>
+        <path d="M14 6 L15.7 11.9 L21.5 13.7 L15.7 15.5 L14 21.4 L12.3 15.5 L6.5 13.7 L12.3 11.9 Z" fill="#fff"/>
+      </svg>
+      <p class="text-muted" style="font-size:15px;margin:0">Sophia, your personal AI advisor</p>
+    </div>
+    <h1 style="font-size:34px;line-height:1.08;margin-bottom:2px">Know the car <span class="gradient-text">before you buy it</span></h1>
+    <p class="text-muted" style="font-size:15px;margin:0 0 var(--space-4)">Paste a VIN or a listing link. Get a full buying report in seconds.</p>
+
+    <div style="display:inline-flex;align-items:center;gap:8px;align-self:center;margin:0 0 var(--space-6);padding:6px 14px;border-radius:999px;background:var(--color-surface);border:1px solid var(--color-divider);font-size:12.5px;line-height:1.3">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--gradient-ai-diag);flex:none"></span>
+      <span>In beta &middot; full support for <strong>997</strong> &amp; <strong>718</strong> models &middot; more chassis coming soon</span>
+    </div>
+
+    <form onSubmit="{{ handleSearch }}" class="ask-input-pill ask-input-pill-lg" style="margin-bottom:var(--space-4)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;opacity:0.55"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input class="input" style="font-family:monospace;letter-spacing:0.02em;flex:1" placeholder="VIN, option code, or listing link" value="{{ vin }}" onChange="{{ handleVinChange }}"></input>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;opacity:0.55"><rect x="9" y="2" width="6" height="11" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+      <button type="submit" class="ask-send" aria-label="Build report">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+      </button>
+    </form>
+
+    <div class="chip-row">
+      <button type="button" class="ai-chip" onClick="{{ handleChipSpecRarity }}"><span class="sparkle">&#10022;</span> Spec rarity</button>
+      <button type="button" class="ai-chip" onClick="{{ handleChipMarketDashboard }}"><span class="sparkle">&#10022;</span> Market dashboard</button>
+      <button type="button" class="ai-chip" onClick="{{ handleChipOpportunityAlerts }}"><span class="sparkle">&#10022;</span> Opportunity alerts</button>
+    </div>
+
+    <p class="text-muted" style="font-size:12px;margin:var(--space-6) 0 var(--space-8)">Free basic report &middot; no credit card &middot; cancel anytime</p>
+
+    <p class="text-muted" style="font-size:13px;margin-top:var(--space-6)">Already have an account? <a href="CreateAccount.dc.html">Log in</a> &middot; <a href="CreateAccount.dc.html">Sign up free</a></p>
+  </section>
+
+  <!-- ═══ OPTION TAKE-RATE DISTRIBUTION — HERO DATA VIZ ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:0 var(--space-4) var(--space-8)">
+    <div class="card elev-sm tt-chart-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-4)">
+        <div>
+          <h6 style="color:var(--color-accent-700);margin-bottom:4px">REAL DATA &middot; 718 SPYDER, 1,067 BUILDS</h6>
+          <h3 class="card-title" style="font-size:20px;margin:0">Where every option really lands</h3>
+        </div>
+        <span class="tag tag-outline">{{ optCount }} factory options plotted</span>
+      </div>
+
+      <div class="tt-stats">
+        <div class="tt-stat">
+          <div class="label">Rarest option</div>
+          <div class="value">{{ rarestPct }}%</div>
+          <p class="text-muted" style="font-size:12px;margin:0">{{ rarestLabel }}</p>
+        </div>
+        <div class="tt-stat">
+          <div class="label">Most common</div>
+          <div class="value">{{ commonPct }}%</div>
+          <p class="text-muted" style="font-size:12px;margin:0">{{ commonLabel }}</p>
+        </div>
+        <div class="tt-stat">
+          <div class="label">Average take rate</div>
+          <div class="value">{{ avgPct }}%</div>
+          <p class="text-muted" style="font-size:12px;margin:0">Across every cataloged option</p>
+        </div>
+        <div class="tt-stat">
+          <div class="label">MSRP peak</div>
+          <div class="value">$110&ndash;116k</div>
+          <p class="text-muted" style="font-size:12px;margin:0">Most common price band</p>
+        </div>
+      </div>
+
+      <svg viewBox="0 0 920 200" style="width:100%;height:auto;display:block" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="ttAreaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.5"></stop>
+            <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"></stop>
+          </linearGradient>
+          <linearGradient id="ttLineGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#3b6bff"></stop>
+            <stop offset="33%" stop-color="#8b5cf6"></stop>
+            <stop offset="66%" stop-color="#d946ef"></stop>
+            <stop offset="100%" stop-color="#ec4899"></stop>
+          </linearGradient>
+        </defs>
+        <sc-for list="{{ gridLines }}" as="g">
+          <line x1="40" y1="{{ g.y }}" x2="920" y2="{{ g.y }}" stroke="var(--color-divider)" stroke-width="1"></line>
+          <text x="0" y="{{ g.textY }}" font-size="10" fill="var(--color-text)" opacity="0.5">{{ g.label }}</text>
+        </sc-for>
+        <path d="{{ areaPath }}" fill="url(#ttAreaGrad)" stroke="none"></path>
+        <path d="{{ linePath }}" fill="none" stroke="url(#ttLineGrad)" stroke-width="2.5" stroke-linecap="round"></path>
+      </svg>
+      <div style="display:flex;justify-content:space-between;margin-top:var(--space-2);padding-left:40px">
+        <span class="tt-axis-label">&larr; Rarest options</span>
+        <span class="tt-axis-label">Most common options &rarr;</span>
+      </div>
+      <p class="source-note">Every factory option code Sophia has verified for the 718 Spyder, sorted rare to common by real take rate. This is the same chart Sophia drops into an AI summary report for a submitted VIN &mdash; showing at a glance which of that car's options are common spec and which ones actually make it stand out.</p>
+    </div>
+  </section>
+
+  <!-- ═══ SPOTTER'S GUIDE — 718, RANKED BY REAL TAKE RATE ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:0 var(--space-4) var(--space-8)">
+    <div class="card elev-sm tt-chart-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:var(--space-2);margin-bottom:4px">
+        <div>
+          <h6 style="color:var(--color-accent-700);margin-bottom:4px">SPOTTER'S GUIDE &middot; 718</h6>
+          <h3 class="card-title" style="font-size:20px;margin:0">Rarest options to look for</h3>
+        </div>
+        <span class="tag tag-outline">&#128142; SPEC ENGINE</span>
+      </div>
+      <p class="text-muted" style="font-size:13px;margin:6px 0 var(--space-4)">The 10 lowest take-rate options in the 1,067-build 718 Spyder database &mdash; ranked, not described. Shorter bar means fewer buyers optioned it, the classic collector rarity signal.</p>
+
+      <div class="sg-rows">
+        <sc-for list="{{ spotterRows }}" as="row">
+          <div class="sg-row">
+            <div class="sg-label">{{ row.label }}</div>
+            <div class="sg-track"><div class="sg-fill" style="width:{{ row.barPct }}%"></div></div>
+            <div class="sg-value-col">
+              <div class="sg-value">{{ row.pctLabel }}</div>
+              <div class="sg-meta">{{ row.meta }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <p class="source-note">Ranked from the same 52-code option reference behind the chart above. Every bar is a real factory code with a real build count &mdash; nothing here is estimated.</p>
+    </div>
+    <div style="text-align:center;margin-top:var(--space-6)">
+      <a href="MarketData.dc.html" class="btn btn-secondary">See real 718 production &amp; color-rarity data &rarr;</a>
+    </div>
+  </section>
+
+  <!-- Everything below is hidden per request — kept in the markup, not deleted, so it can be switched back on later. -->
+  <div id="more-content" style="display:none">
+
+
+  <!-- ═══ STAT STRIP ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-6) var(--space-4);display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4)">
+    <div>
+      <div class="stat-num">18,400+</div>
+      <p class="text-muted" style="font-size:13px;margin:0">VINs decoded</p>
+    </div>
+    <div>
+      <div class="stat-num">640+</div>
+      <p class="text-muted" style="font-size:13px;margin:0">Factory option codes explained</p>
+    </div>
+    <div>
+      <div class="stat-num">1963&ndash;now</div>
+      <p class="text-muted" style="font-size:13px;margin:0">Production years covered</p>
+    </div>
+    <div>
+      <div class="stat-num">12</div>
+      <p class="text-muted" style="font-size:13px;margin:0">Chassis platforms, 911 to Taycan</p>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ LIVE TICKER ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-4)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">JUST DECODED &mdash; LIVE FROM THE SITE</h6>
+    <div class="ticker-row">
+      <span class="ticker-item">2019 911 GT3 (991.2) &middot; 4 options found &middot; today</span>
+      <span class="ticker-item">2016 Cayman GT4 (981) &middot; PCCB + Alcantara &middot; today</span>
+      <span class="ticker-item">1973 911 Carrera RS 2.7 &middot; Touring &middot; today</span>
+      <span class="ticker-item">2022 992 GT3 RS &middot; Weissach Pkg &middot; today</span>
+      <span class="ticker-item">2003 996 Turbo X50 &middot; today</span>
+      <span class="ticker-item">1995 993 Carrera RS &middot; today</span>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ FEATURE SHOWCASE ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-2)">NOT ANOTHER MARKETPLACE. THE DECISION LAYER ON TOP OF EVERY ONE.</h6>
+    <h2 style="max-width:680px;margin-bottom:var(--space-8)">Bring a Trailer shows you listings. Sophia tells you whether to buy.</h2>
+
+    <div class="feature-row">
+      <div>
+        <span class="tag tag-neutral" style="margin-bottom:var(--space-2)">FREE</span>
+        <h3 class="card-title" style="font-size:24px">Every option code, explained in plain English</h3>
+        <p style="opacity:0.85">PCCB, X51, X73, PTS &mdash; AI reads the factory codes off your exact VIN and explains what each one means and why collectors actually care, not just what the acronym stands for.</p>
+      </div>
+      <div class="feature-visual card elev-sm">
+        <p class="card-kicker">FACTORY OPTIONS</p>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <div style="display:grid;grid-template-columns:80px 1fr;gap:var(--space-3);align-items:start">
+            <span class="tag tag-accent" style="font-family:monospace">PCCB</span>
+            <span style="font-size:13px;opacity:0.85">Ceramic composite brakes &mdash; sheds 40+ lbs of unsprung weight, a near must-have for track-honest GT cars.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr;gap:var(--space-3);align-items:start">
+            <span class="tag tag-accent" style="font-family:monospace">X-CLUB</span>
+            <span style="font-size:13px;opacity:0.85">Club Sport Package &mdash; half-cage prep and a harness bar, a signal the car was bought to be driven hard.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-row rev">
+      <div>
+        <span class="tag tag-neutral" style="margin-bottom:var(--space-2)">FREE</span>
+        <h3 class="card-title" style="font-size:24px">The complete factory build sheet</h3>
+        <p style="opacity:0.85">Model, generation, engine, output, transmission, drive type, original colors, MSRP, plant, and build date &mdash; pulled straight from the VIN, not a guess.</p>
+      </div>
+      <div class="feature-visual card elev-sm">
+        <p class="card-kicker">SPEC SHEET</p>
+        <table class="table" style="font-size:12.5px">
+          <tbody>
+            <tr><td class="text-muted">Engine</td><td>4.0L NA Flat-6</td></tr>
+            <tr><td class="text-muted">Horsepower</td><td>500 hp @ 8,250 rpm</td></tr>
+            <tr><td class="text-muted">Plant</td><td>Zuffenhausen, Germany</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div>
+        <span class="tag tag-accent" style="margin-bottom:var(--space-2)">PRO</span>
+        <h3 class="card-title" style="font-size:24px">Collector desirability &amp; spec rarity, scored</h3>
+        <p style="opacity:0.85">How this build ranks against every other example of the same model for spec, rarity, and options &mdash; a single number, not a spreadsheet.</p>
+      </div>
+      <div class="feature-visual card elev-sm" style="position:relative;border-top:3px solid transparent;border-image:var(--gradient-ai) 1">
+        <p class="card-kicker">COLLECTOR DESIRABILITY</p>
+        <h3 class="card-title locked-value" style="filter:blur(6px)">8.7 / 10</h3>
+        <p class="card-body">Ranked against every 991.2 GT3 on record.</p>
+      </div>
+    </div>
+
+    <div class="feature-row rev">
+      <div>
+        <span class="tag tag-accent" style="margin-bottom:var(--space-2)">PRO</span>
+        <h3 class="card-title" style="font-size:24px">Fair market value &amp; comparable sales, before you bid</h3>
+        <p style="opacity:0.85">A value estimate tuned to this exact spec, plus every recent sale of one just like it &mdash; so you know a fair price before you make an offer.</p>
+      </div>
+      <div class="feature-visual card elev-sm" style="position:relative;border-top:3px solid transparent;border-image:var(--gradient-ai) 1">
+        <p class="card-kicker">FAIR MARKET VALUE</p>
+        <h3 class="card-title locked-value" style="filter:blur(6px)">$189,400</h3>
+        <p class="card-body">Based on 3 recent comparable sales.</p>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div>
+        <span class="tag tag-accent" style="margin-bottom:var(--space-2)">PRO</span>
+        <h3 class="card-title" style="font-size:24px">What it costs to own &mdash; and how to negotiate</h3>
+        <p style="opacity:0.85">Expected ownership costs, known issues for this exact chassis and options, a negotiation strategy briefing, and an appreciation outlook &mdash; the parts of buying a car nobody puts in the listing.</p>
+      </div>
+      <div class="feature-visual card elev-sm" style="position:relative;border-top:3px solid transparent;border-image:var(--gradient-ai) 1">
+        <p class="card-kicker">BUYING REPORT</p>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:var(--space-2)">
+          <span class="tag tag-neutral" style="width:fit-content">Ownership costs</span>
+          <span class="tag tag-neutral" style="width:fit-content">Common issues</span>
+          <span class="tag tag-neutral" style="width:fit-content">Negotiation strategy</span>
+          <span class="tag tag-neutral" style="width:fit-content">Appreciation outlook</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ HOW IT WORKS ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+    <h2 style="margin-bottom:var(--space-6)">From a VIN or a listing link to a decision</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4)">
+      <div class="card elev-sm">
+        <span class="step-num">01</span>
+        <h3 class="card-title">Paste a VIN or listing link</h3>
+        <p class="card-body">Every Porsche chassis, 1963 to today &mdash; or a link from wherever you're already shopping.</p>
+      </div>
+      <div class="card elev-sm">
+        <span class="step-num">02</span>
+        <h3 class="card-title">AI builds the report</h3>
+        <p class="card-body">A complete buying report in 15&ndash;30 seconds &mdash; not another listing, an answer.</p>
+      </div>
+      <div class="card elev-sm">
+        <span class="step-num">03</span>
+        <h3 class="card-title">See the full picture</h3>
+        <p class="card-body">Fair value, desirability, rarity, comps, ownership costs, known issues, and how to negotiate.</p>
+      </div>
+      <div class="card elev-sm">
+        <span class="step-num">04</span>
+        <h3 class="card-title">Revisit it anytime</h3>
+        <p class="card-body">Pro unlocks saved searches, portfolio tracking, alerts, and deeper analytics through the whole ownership lifecycle.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ PRICING TEASER ═══ -->
+  <section id="pricing" style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+    <div style="display:flex;justify-content:flex-end;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-6)">
+      <a href="Pricing.dc.html" class="btn btn-ghost">Compare every feature &rarr;</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4)">
+      <div class="card elev-sm">
+        <p class="card-kicker">FREE</p>
+        <h3 class="card-title">$0</h3>
+        <p class="card-body">Unlimited VIN decodes, factory options explained, full spec sheet &mdash; the basic report, free forever.</p>
+      </div>
+      <div class="card elev-sm">
+        <p class="card-kicker">PRO</p>
+        <h3 class="card-title">$9.99/mo</h3>
+        <p class="card-body">Collector desirability, fair market value, comparable sales, ownership costs &amp; common issues.</p>
+      </div>
+      <div class="card elev-sm" style="box-shadow:var(--shadow-lg);border:2px solid transparent;border-image:var(--gradient-ai-diag) 1">
+        <p class="card-kicker">MOST POPULAR &middot; COLLECTOR</p>
+        <h3 class="card-title">$19.99/mo</h3>
+        <p class="card-body">Everything in Pro, plus negotiation strategy, appreciation outlook, saved searches, portfolio tracking &amp; alerts.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr" style="max-width:1280px;margin:0 auto"></hr>
+
+  <!-- ═══ TRUST STRIP ═══ -->
+  <section style="max-width:1280px;margin:0 auto;padding:var(--space-6) var(--space-4);display:flex;align-items:center;gap:var(--space-6);flex-wrap:wrap">
+    <span class="text-muted" style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase">Built for</span>
+    <span style="font-size:14px">Rennlist regulars</span>
+    <span style="font-size:14px">Bring a Trailer bidders</span>
+    <span style="font-size:14px">PCA members</span>
+    <span style="font-size:14px">Dealers &amp; auction buyers</span>
+  </section>
+
+  <!-- ═══ CLOSING CTA ═══ -->
+  <section style="background:var(--color-accent);padding:var(--space-8) var(--space-4)">
+    <div style="max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--space-4)">
+      <h2 style="color:#fff;margin:0">Free to decode. Free to start.</h2>
+      <a href="CreateAccount.dc.html" class="btn" style="background:var(--color-bg);color:var(--color-accent-800)">Create free account</a>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer style="max-width:1280px;margin:0 auto;padding:var(--space-8) var(--space-4);display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:var(--space-6)">
+    <div>
+      <div class="brand-lockup" style="margin-bottom:var(--space-2)">
+        <svg class="brand-mark" width="20" height="20" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="gradFooterMark" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#3b6bff"/>
+              <stop offset="33%" stop-color="#8b5cf6"/>
+              <stop offset="66%" stop-color="#d946ef"/>
+              <stop offset="100%" stop-color="#ec4899"/>
+            </linearGradient>
+          </defs>
+          <rect width="28" height="28" rx="8" fill="url(#gradFooterMark)"/>
+          <path d="M14 6 L15.7 11.9 L21.5 13.7 L15.7 15.5 L14 21.4 L12.3 15.5 L6.5 13.7 L12.3 11.9 Z" fill="#fff"/>
+        </svg>
+        <span class="nav-brand">Sophia</span>
+      </div>
+      <p class="text-muted" style="font-size:13px;max-width:280px">Your personal AI advisor for Porsche buyers. Know the car before you buy it.</p>
+    </div>
+    <div>
+      <h6 class="text-muted" style="margin-bottom:var(--space-2)">LEARN</h6>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+        <a href="#option-codes">Option Code Database</a>
+        <a href="#pts">PTS Colors</a>
+        <a href="#pccb">PCCB Explained</a>
+      </div>
+    </div>
+    <div>
+      <h6 class="text-muted" style="margin-bottom:var(--space-2)">PRODUCT</h6>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+        <a href="index.html">Get a Report</a>
+        <a href="MarketData.dc.html">Market Data</a>
+        <a href="Pricing.dc.html">Pricing</a>
+        <a href="Pricing.dc.html#faq">FAQ</a>
+      </div>
+    </div>
+    <div>
+      <h6 class="text-muted" style="margin-bottom:var(--space-2)">COMPANY</h6>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+        <a href="#contact">Contact</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#terms">Terms</a>
+      </div>
+    </div>
+  </footer>
+  <div style="max-width:1280px;margin:0 auto;padding:0 var(--space-4) var(--space-6)">
+    <span class="text-muted" style="font-size:12px">&copy; 2026 Sophia</span>
+  </div>
+
+  </div>
+</div>
+]]>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroHeadline&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;What would you like to ask?&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ctaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Decode VIN&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { vin: "" };
+  handleVinChange(e) { this.setState({ vin: e.target.value }); }
+  navigateTo(query) {
+    var q = (query || "").trim();
+    if (!q) return;
+    var looksLikeUrl = /^(https?:\/\/|www\.)/i.test(q);
+    var looksLikeVin = !looksLikeUrl && /^[A-HJ-NPR-Z0-9]{17}$/i.test(q.replace(/\s+/g, ""));
+    var param = looksLikeUrl ? "url" : (looksLikeVin ? "vin" : "code");
+    window.location.href = "VinResults.dc.html?" + param + "=" + encodeURIComponent(q);
+  }
+  handleSearch(e) {
+    e.preventDefault();
+    this.navigateTo(this.state.vin);
+  }
+  handleAsk(example) {
+    this.setState({ vin: example });
+    this.navigateTo(example);
+  }
+  goTo(url) {
+    window.location.href = url;
+  }
+  // Catmull-Rom -> cubic-Bezier smoothing (tension 1/6) -- turns a raw
+  // point list into the same kind of smooth SVG area/line curve as the
+  // reference dashboard's "Triaged alerts over time" chart.
+  smoothPath(points) {
+    if (points.length < 2) return "";
+    var d = "M" + points[0][0] + "," + points[0][1];
+    for (var i = 0; i < points.length - 1; i++) {
+      var p0 = points[i === 0 ? 0 : i - 1];
+      var p1 = points[i];
+      var p2 = points[i + 1];
+      var p3 = points[i + 2 < points.length ? i + 2 : i + 1];
+      var c1x = p1[0] + (p2[0] - p0[0]) / 6;
+      var c1y = p1[1] + (p2[1] - p0[1]) / 6;
+      var c2x = p2[0] - (p3[0] - p1[0]) / 6;
+      var c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += " C" + c1x + "," + c1y + " " + c2x + "," + c2y + " " + p2[0] + "," + p2[1];
+    }
+    return d;
+  }
+  renderVals() {
+    var sb = window.SophiaSpyderBuilds;
+    var options = Object.keys(sb.optionReference).map((code) => {
+      var ref = sb.optionReference[code];
+      return { code: code, description: ref.description, takeRate: ref.takeRate };
+    });
+    options.sort((a, b) => a.takeRate - b.takeRate);
+
+    var n = options.length;
+    var W = 920, H = 200, padLeft = 40, padRight = 8, padTop = 14, padBottom = 14;
+    var innerW = W - padLeft - padRight;
+    var innerH = H - padTop - padBottom;
+    var points = options.map((o, i) => {
+      var x = padLeft + (n > 1 ? (i / (n - 1)) : 0) * innerW;
+      var y = padTop + innerH - (o.takeRate / 100) * innerH;
+      return [Math.round(x * 10) / 10, Math.round(y * 10) / 10];
+    });
+    var linePath = this.smoothPath(points);
+    var areaPath = linePath +
+      " L" + points[points.length - 1][0] + "," + (H - padBottom) +
+      " L" + points[0][0] + "," + (H - padBottom) + " Z";
+
+    var gridLines = [0, 25, 50, 75, 100].map((pct) => {
+      var y = padTop + innerH - (pct / 100) * innerH;
+      var showLabel = pct === 0 || pct === 50 || pct === 100;
+      return { y: Math.round(y), textY: Math.round(y) + 3, label: showLabel ? (pct + "%") : "" };
+    });
+
+    var rarest = options[0];
+    var mostCommon = options[n - 1];
+    var avgTakeRate = Math.round(options.reduce((s, o) => s + o.takeRate, 0) / n);
+
+    // Spotter's Guide -- the 10 lowest take-rate cataloged options, ranked.
+    // Bar width is scaled to the max take rate *within this shown subset*
+    // (not 0-100) so the rarest-of-the-rare still reads as a visible bar,
+    // same relative-scaling approach as the Market Data production chart.
+    var rarestTen = options.slice(0, 10);
+    var subsetMax = Math.max.apply(null, rarestTen.map((o) => o.takeRate)) || 1;
+    var spotterRows = rarestTen.map((o) => {
+      var ref = sb.optionReference[o.code];
+      var meta = "Code " + o.code;
+      if (ref.buildCount != null) {
+        meta += " · " + ref.buildCount.toLocaleString() + " of 1,067 builds";
+        if (ref.category) meta += " · " + ref.category;
+      } else {
+        meta += " · confirmed via factory build sheet";
+      }
+      return {
+        label: o.description,
+        barPct: Math.max(4, Math.round((o.takeRate / subsetMax) * 100)),
+        pctLabel: o.takeRate + "%",
+        meta: meta,
+      };
+    });
+
+    return {
+      heroHeadline: this.props.heroHeadline ?? "What would you like to ask?",
+      ctaLabel: this.props.ctaLabel ?? "Decode VIN",
+      vin: this.state.vin,
+      handleVinChange: (e) => this.handleVinChange(e),
+      handleSearch: (e) => this.handleSearch(e),
+      // Spec rarity is a real card on the buying report -- jump straight to
+      // a live demo report so the chip shows the actual feature, not a promise.
+      handleChipSpecRarity: () => this.goTo("VinResults.dc.html?vin=WP0AC2A99KS165890"),
+      // Market dashboard is a real page now (production counts + color
+      // rarity charts). Opportunity alerts is still a Pro/Collector-tier
+      // feature described on Pricing -- route there rather than fabricate
+      // a page that doesn't exist yet.
+      handleChipMarketDashboard: () => this.goTo("MarketData.dc.html"),
+      handleChipOpportunityAlerts: () => this.goTo("Pricing.dc.html"),
+
+      optCount: n,
+      rarestPct: rarest.takeRate,
+      rarestLabel: rarest.code + " — " + rarest.description,
+      commonPct: mostCommon.takeRate,
+      commonLabel: mostCommon.code + " — " + mostCommon.description,
+      avgPct: avgTakeRate,
+      gridLines: gridLines,
+      linePath: linePath,
+      areaPath: areaPath,
+      spotterRows: spotterRows,
+    };
+  }
+}
+</script>
+</body>
+</html>
